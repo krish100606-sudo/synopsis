@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitTrack AI | AI-Driven Health & Fitness Tracker</title>
+  <!-- SEO & Meta -->
+  <meta name="description" content="AI-Driven microservices-based fitness tracking platform with asynchronous RabbitMQ message queues and Gemini AI personalized coaching insights." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="bg-dark text-light">
+  <div id="app" class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="nav-brand">
+        <div class="brand-logo-glow">
+          <i data-lucide="activity" class="brand-icon"></i>
+        </div>
+        <div class="brand-title-wrap">
+          <h1 class="brand-title">FitTrack <span class="gradient-text">AI</span></h1>
+          <span class="badge badge-ai-pulse"><i data-lucide="sparkles" class="icon-sm"></i> Gemini Powered</span>
+        </div>
+      </div>
+
+      <div class="nav-center-status">
+        <div class="status-pill status-online" title="Spring Cloud Gateway online">
+          <span class="status-dot"></span> Gateway: 8080
+        </div>
+        <div class="status-pill status-online" title="RabbitMQ Queue Active">
+          <span class="status-dot pulse"></span> RabbitMQ: Active
+        </div>
+        <div class="status-pill status-ai" title="Google Gemini API Ready">
+          <i data-lucide="bot" class="icon-xs"></i> Gemini AI API
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="btn-synopsis" class="btn btn-outline-sm" title="View Project Synopsis">
+          <i data-lucide="file-text"></i> Synopsis Docs
+        </button>
+        <button id="btn-keycloak" class="btn btn-keycloak-sm" title="Keycloak OAuth 2.0 Auth">
+          <i data-lucide="shield-check"></i> <span id="user-display-name">Krish Gupta</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="workspace">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-tab="tab-dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-tab="tab-activity-log">
+            <i data-lucide="plus-circle"></i>
+            <span>Log Activity & Pipeline</span>
+          </button>
+          <button class="nav-item" data-tab="tab-ai-insights">
+            <i data-lucide="brain-circuit"></i>
+            <span>AI Coaching & Insights</span>
+            <span id="insights-count-badge" class="nav-badge">4</span>
+          </button>
+          <button class="nav-item" data-tab="tab-architecture">
+            <i data-lucide="cpu"></i>
+            <span>Microservices & RabbitMQ</span>
+          </button>
+          <button class="nav-item" data-tab="tab-keycloak">
+            <i data-lucide="lock"></i>
+            <span>Keycloak & OAuth 2.0</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="mini-project-meta">
+            <div class="meta-label">MINI PROJECT BCS 554</div>
+            <div class="meta-val">Dronacharya Group of Inst.</div>
+            <div class="meta-sub">B.Tech AIML / CSE (2025-26)</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <main class="content-area">
+        
+        <!-- TAB 1: DASHBOARD OVERVIEW -->
+        <section id="tab-dashboard" class="tab-page active">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Personal Health & Fitness Overview</h2>
+              <p class="page-subtitle">Real-time telemetry and Gemini AI personalized health coaching recommendations</p>
+            </div>
+            <button class="btn btn-primary" id="btn-quick-log">
+              <i data-lucide="plus"></i> Log New Workout
+            </button>
+          </div>
+
+          <!-- KPI Cards Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card glass-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Weekly Calories</span>
+                <div class="kpi-icon-wrap icon-flame"><i data-lucide="flame"></i></div>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-calories">3,420</span>
+                <span class="kpi-unit">kcal</span>
+              </div>
+              <div class="kpi-footer text-success">
+                <i data-lucide="trending-up" class="icon-sm"></i> +14.2% from last week
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Active Time</span>
+                <div class="kpi-icon-wrap icon-timer"><i data-lucide="timer"></i></div>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-active-time">285</span>
+                <span class="kpi-unit">mins</span>
+              </div>
+              <div class="kpi-footer text-info">
+                <i data-lucide="check-circle-2" class="icon-sm"></i> 95% of weekly goal
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Total Workouts</span>
+                <div class="kpi-icon-wrap icon-dumbell"><i data-lucide="dumbbell"></i></div>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-workouts">8</span>
+                <span class="kpi-unit">sessions</span>
+              </div>
+              <div class="kpi-footer text-accent">
+                <i data-lucide="zap" class="icon-sm"></i> 4 High Intensity
+              </div>
+            </div>
+
+            <div class="kpi-card glass-card">
+              <div class="kpi-header">
+                <span class="kpi-title">AI Safety Index</span>
+                <div class="kpi-icon-wrap icon-shield"><i data-lucide="shield-check"></i></div>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-safety">98</span>
+                <span class="kpi-unit">/ 100</span>
+              </div>
+              <div class="kpi-footer text-success">
+                <i data-lucide="sparkles" class="icon-sm"></i> Optimal strain recovery ratio
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts & AI Spotlight Section -->
+          <div class="dashboard-middle-grid">
+            <div class="glass-card chart-card">
+              <div class="card-header">
+                <h3><i data-lucide="bar-chart-3"></i> Weekly Activity & Calorie Burn</h3>
+                <div class="card-badge">Spring Activity Service Data</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="weeklyActivityChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card spotlight-ai-card">
+              <div class="card-header">
+                <h3 class="gradient-text"><i data-lucide="sparkles"></i> Latest Gemini AI Recommendation</h3>
+                <span class="badge badge-ai">Real-time</span>
+              </div>
+              <div id="latest-ai-spotlight" class="spotlight-content">
+                <!-- Dynamically filled -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Logged Activities Table -->
+          <div class="glass-card table-card">
+            <div class="card-header">
+              <h3><i data-lucide="history"></i> Recent Physical Activities</h3>
+              <div class="filter-group">
+                <button class="btn-chip active" data-filter="all">All</button>
+                <button class="btn-chip" data-filter="Running">Running</button>
+                <button class="btn-chip" data-filter="Weightlifting">Gym</button>
+                <button class="btn-chip" data-filter="Cycling">Cycling</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Activity Type</th>
+                    <th>Duration</th>
+                    <th>Calories</th>
+                    <th>Avg Heart Rate</th>
+                    <th>Timestamp</th>
+                    <th>RabbitMQ Status</th>
+                    <th>AI Insights</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="activity-table-body">
+                  <!-- Filled via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: LOG ACTIVITY & ASYNC PIPELINE -->
+        <section id="tab-activity-log" class="tab-page">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Log New Activity & RabbitMQ Pipeline</h2>
+              <p class="page-subtitle">Submit physical activity metrics to trigger asynchronous RabbitMQ background AI processing</p>
+            </div>
+          </div>
+
+          <div class="logging-grid">
+            <!-- Form Card -->
+            <div class="glass-card form-card">
+              <div class="card-header">
+                <h3><i data-lucide="pen-tool"></i> Physical Activity Ingestion</h3>
+                <span class="badge badge-outline">Activity Service Endpoint</span>
+              </div>
+              <form id="activity-form" class="activity-form">
+                <div class="form-group">
+                  <label for="act-type">Activity Type</label>
+                  <select id="act-type" class="form-control" required>
+                    <option value="Running">🏃 Running / Jogging</option>
+                    <option value="Weightlifting">🏋️ Weightlifting / Resistance</option>
+                    <option value="Cycling">🚴 Outdoor / Indoor Cycling</option>
+                    <option value="HIIT">⚡ HIIT Cardio Workout</option>
+                    <option value="Swimming">🏊 Swimming</option>
+                    <option value="Yoga">🧘 Yoga & Recovery</option>
+                  </select>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="act-duration">Duration (Minutes)</label>
+                    <input type="number" id="act-duration" class="form-control" min="5" max="300" value="45" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="act-calories">Calories Burned (kcal)</label>
+                    <input type="number" id="act-calories" class="form-control" min="20" max="3000" value="420" required />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="act-heartrate">Avg Heart Rate (BPM)</label>
+                    <input type="number" id="act-heartrate" class="form-control" min="50" max="220" value="148" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="act-intensity">Perceived Intensity</label>
+                    <select id="act-intensity" class="form-control">
+                      <option value="Low">Low / Moderate (Zone 1-2)</option>
+                      <option value="Medium" selected>Moderate / High (Zone 3-4)</option>
+                      <option value="High">Maximum Effort (Zone 5)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="act-notes">Fatigue & Recovery Notes (Optional for AI)</label>
+                  <input type="text" id="act-notes" class="form-control" placeholder="e.g. Felt slight knee soreness towards end, slept 6 hours last night" />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" id="btn-submit-activity" class="btn btn-primary btn-block">
+                    <i data-lucide="send"></i> Dispatch Activity to Gateway & Queue
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Live Pipeline & Message Queue Execution Inspector -->
+            <div class="glass-card pipeline-card">
+              <div class="card-header">
+                <h3><i data-lucide="git-merge"></i> Async Microservices Pipeline</h3>
+                <span class="badge badge-rabbitmq"><i data-lucide="layers" class="icon-xs"></i> RabbitMQ Queue: fit.activity.queue</span>
+              </div>
+
+              <!-- Animated Pipeline Diagram -->
+              <div class="pipeline-diagram">
+                <div class="pipeline-step step-user" id="step-1">
+                  <div class="step-node"><i data-lucide="user"></i></div>
+                  <div class="step-label">1. User App</div>
+                  <div class="step-sub">OAuth Token</div>
+                </div>
+                <div class="pipeline-arrow"><i data-lucide="chevron-right"></i></div>
+
+                <div class="pipeline-step step-gateway" id="step-2">
+                  <div class="step-node"><i data-lucide="network"></i></div>
+                  <div class="step-label">2. API Gateway</div>
+                  <div class="step-sub">Token Validation</div>
+                </div>
+                <div class="pipeline-arrow"><i data-lucide="chevron-right"></i></div>
+
+                <div class="pipeline-step step-service" id="step-3">
+                  <div class="step-node"><i data-lucide="database"></i></div>
+                  <div class="step-label">3. Activity Service</div>
+                  <div class="step-sub">DB Store & Event</div>
+                </div>
+                <div class="pipeline-arrow"><i data-lucide="chevron-right"></i></div>
+
+                <div class="pipeline-step step-queue" id="step-4">
+                  <div class="step-node"><i data-lucide="mail"></i></div>
+                  <div class="step-label">4. RabbitMQ Queue</div>
+                  <div class="step-sub">Async Exchange</div>
+                </div>
+                <div class="pipeline-arrow"><i data-lucide="chevron-right"></i></div>
+
+                <div class="pipeline-step step-ai" id="step-5">
+                  <div class="step-node"><i data-lucide="bot"></i></div>
+                  <div class="step-label">5. Gemini AI Service</div>
+                  <div class="step-sub">Safety & Coaching</div>
+                </div>
+              </div>
+
+              <!-- Pipeline Status Terminal -->
+              <div class="terminal-window">
+                <div class="terminal-bar">
+                  <span class="term-dot red"></span>
+                  <span class="term-dot yellow"></span>
+                  <span class="term-dot green"></span>
+                  <span class="term-title">System Event Stream & RabbitMQ Message Log</span>
+                </div>
+                <div id="pipeline-log" class="terminal-body">
+                  <div class="log-line text-muted">[System] Ready to ingest activity logs via Spring Cloud Gateway.</div>
+                  <div class="log-line text-info">[RabbitMQ] Broker connected. AMQP Exchange 'fitness.exchange' topic bound.</div>
+                  <div class="log-line text-ai">[Gemini AI] Recommendation engine listener registered on queue 'fit.activity.queue'.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: AI COACHING & INSIGHTS HUB -->
+        <section id="tab-ai-insights" class="tab-page">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Google Gemini AI Coaching Insights</h2>
+              <p class="page-subtitle">Structured fitness advice, safety precautions, injury prevention, and customized recovery plans generated by AI</p>
+            </div>
+            <div class="ai-key-config">
+              <button class="btn btn-outline-sm" id="btn-toggle-key-modal">
+                <i data-lucide="key"></i> API Key Settings
+              </button>
+            </div>
+          </div>
+
+          <div id="ai-cards-container" class="insights-grid">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+
+        <!-- TAB 4: MICROSERVICES & RABBITMQ ARCHITECTURE INSPECTOR -->
+        <section id="tab-architecture" class="tab-page">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Microservices & RabbitMQ Architecture</h2>
+              <p class="page-subtitle">Spring Boot microservices decomposition, message queue topology, and non-blocking asynchronous processing design</p>
+            </div>
+          </div>
+
+          <!-- Architecture Visual Map -->
+          <div class="glass-card arch-card">
+            <div class="card-header">
+              <h3><i data-lucide="boxes"></i> System Topology & Message Flow</h3>
+              <div class="status-pill status-online">Spring Cloud Eureka / Gateway</div>
+            </div>
+
+            <div class="architecture-diagram-interactive">
+              <!-- Frontend Box -->
+              <div class="arch-box box-frontend">
+                <div class="box-icon"><i data-lucide="monitor"></i></div>
+                <div class="box-title">React Dashboard Frontend</div>
+                <div class="box-desc">OAuth 2.0 PKCE client<br>Real-time telemetry UI</div>
+              </div>
+
+              <div class="arch-flow-arrow horizontal">
+                <span>HTTPS / REST</span>
+                <i data-lucide="arrow-right"></i>
+              </div>
+
+              <!-- Gateway Box -->
+              <div class="arch-box box-gateway">
+                <div class="box-icon"><i data-lucide="shield-check"></i></div>
+                <div class="box-title">Spring Cloud API Gateway</div>
+                <div class="box-desc">Token Interceptor & Validator<br>Port 8080 Routing</div>
+              </div>
+
+              <div class="arch-flow-arrow horizontal">
+                <span>Validated REST</span>
+                <i data-lucide="arrow-right"></i>
+              </div>
+
+              <!-- Microservices Cluster -->
+              <div class="arch-cluster">
+                <div class="arch-box box-service">
+                  <div class="box-icon"><i data-lucide="user-check"></i></div>
+                  <div class="box-title">User Service</div>
+                  <div class="box-desc">Profiles & Preferences</div>
+                </div>
+
+                <div class="arch-box box-service active-pulse">
+                  <div class="box-icon"><i data-lucide="activity"></i></div>
+                  <div class="box-title">Activity Service</div>
+                  <div class="box-desc">PostgreSQL / MySQL Ingestion</div>
+                </div>
+              </div>
+
+              <div class="arch-flow-arrow horizontal">
+                <span>AMQP Publish</span>
+                <i data-lucide="arrow-right"></i>
+              </div>
+
+              <!-- Message Queue -->
+              <div class="arch-box box-rabbitmq">
+                <div class="box-icon"><i data-lucide="layers"></i></div>
+                <div class="box-title">RabbitMQ Queue</div>
+                <div class="box-desc">Exchange: <code>fitness.exchange</code><br>Queue: <code>fit.activity.queue</code></div>
+              </div>
+
+              <div class="arch-flow-arrow horizontal">
+                <span>AMQP Consume</span>
+                <i data-lucide="arrow-right"></i>
+              </div>
+
+              <!-- AI Service -->
+              <div class="arch-box box-aiservice">
+                <div class="box-icon"><i data-lucide="bot"></i></div>
+                <div class="box-title">AI Recommendation Service</div>
+                <div class="box-desc">Async RabbitMQ Listener<br>Google Gemini API Client</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RabbitMQ Queue State & Metrics -->
+          <div class="arch-metrics-grid">
+            <div class="glass-card">
+              <div class="card-header">
+                <h3><i data-lucide="layers"></i> RabbitMQ Exchange & Queue Specs</h3>
+              </div>
+              <ul class="spec-list">
+                <li><span class="spec-name">Exchange Type:</span> <code>topic (fitness.exchange)</code></li>
+                <li><span class="spec-name">Routing Key:</span> <code>activity.created.#</code></li>
+                <li><span class="spec-name">Consumer Threads:</span> <code>4 Concurrent Workers</code></li>
+                <li><span class="spec-name">Dead Letter Queue:</span> <code>fit.activity.dlq</code></li>
+                <li><span class="spec-name">Avg Queue Latency:</span> <code class="text-success">&lt; 12ms</code></li>
+              </ul>
+            </div>
+
+            <div class="glass-card">
+              <div class="card-header">
+                <h3><i data-lucide="cpu"></i> Microservices Tech Stack</h3>
+              </div>
+              <ul class="spec-list">
+                <li><span class="spec-name">Backend Framework:</span> <code>Java 17 / Spring Boot 3.x</code></li>
+                <li><span class="spec-name">Message Broker:</span> <code>RabbitMQ 3.12+ (AMQP)</code></li>
+                <li><span class="spec-name">AI Model Integration:</span> <code>Google Gemini API SDK</code></li>
+                <li><span class="spec-name">Security & Auth:</span> <code>Keycloak OAuth 2.0 / PKCE</code></li>
+                <li><span class="spec-name">Database Engine:</span> <code>PostgreSQL / MySQL</code></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: KEYCLOAK & OAUTH 2.0 SECURITY -->
+        <section id="tab-keycloak" class="tab-page">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Keycloak & OAuth 2.0 Security Module</h2>
+              <p class="page-subtitle">Standardized OpenID Connect, OAuth 2.0 PKCE authentication flow and JWT access token inspection</p>
+            </div>
+          </div>
+
+          <div class="keycloak-grid">
+            <!-- User Identity Card -->
+            <div class="glass-card user-profile-card">
+              <div class="card-header">
+                <h3><i data-lucide="user-check"></i> Authenticated Active User</h3>
+                <span class="badge badge-success">Keycloak Session Active</span>
+              </div>
+              <div class="user-avatar-area">
+                <div class="user-avatar">KG</div>
+                <div class="user-info">
+                  <h4 id="kc-user-name">Krish Gupta</h4>
+                  <p id="kc-user-email">krish.gupta@dronacharya.info</p>
+                  <span class="user-role-badge">Role: Student / Fitness User</span>
+                </div>
+              </div>
+
+              <div class="user-details-list">
+                <div class="detail-row">
+                  <span class="detail-key">University Roll No:</span>
+                  <span class="detail-val">20510</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Department:</span>
+                  <span class="detail-val">B.Tech AIML (Sem III)</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Authentication Protocol:</span>
+                  <span class="detail-val">OAuth 2.0 + PKCE (Keycloak 22.0)</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Token Expiry:</span>
+                  <span class="detail-val text-warning" id="kc-token-exp">In 28 minutes</span>
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top: 1.5rem;">
+                <button id="btn-refresh-token" class="btn btn-outline-sm btn-block">
+                  <i data-lucide="refresh-cw"></i> Refresh OAuth 2.0 Access Token
+                </button>
+              </div>
+            </div>
+
+            <!-- JWT Inspector Card -->
+            <div class="glass-card jwt-card">
+              <div class="card-header">
+                <h3><i data-lucide="file-code"></i> Decoded JWT Access Token Payload</h3>
+                <span class="badge badge-outline">Bearer Token Header</span>
+              </div>
+
+              <div class="code-block-wrap">
+                <pre><code id="jwt-json-view" class="language-json">
+{
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "keycloak-realm-fit-track-key"
+}
+.
+{
+  "exp": 1759328400,
+  "iat": 1759324800,
+  "jti": "8f3a9b-4412-98ab-f82a9010",
+  "iss": "http://keycloak.fittrack.local/auth/realms/FitTrackRealm",
+  "sub": "user-guid-20510-krish",
+  "typ": "Bearer",
+  "azp": "fittrack-react-dashboard",
+  "session_state": "6e889d12-4c22-49aa",
+  "acr": "1",
+  "realm_access": {
+    "roles": [
+      "default-roles-fittrackrealm",
+      "fitness-user",
+      "ai-coaching-access"
+    ]
+  },
+  "preferred_username": "krish_20510",
+  "name": "Krish Gupta",
+  "given_name": "Krish",
+  "family_name": "Gupta",
+  "email": "krish.gupta@dronacharya.info"
+}
+                </code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: PROJECT SYNOPSIS DOCS & DETAILS -->
+  <div id="modal-synopsis" class="modal-backdrop">
+    <div class="modal-content glass-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <i data-lucide="graduation-cap" class="text-accent"></i>
+          <div>
+            <h3>Mini Project Synopsis Documentation</h3>
+            <p class="modal-sub">BCS 554 | Dronacharya Group of Institutions | Academic Session 2025-26</p>
+          </div>
+        </div>
+        <button class="modal-close" id="close-synopsis-modal"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="synopsis-section">
+          <h4 class="synopsis-heading"><i data-lucide="book-open"></i> Project Title & Summary</h4>
+          <p><strong>AI-DRIVEN HEALTH AND FITNESS TRACKER</strong></p>
+          <p class="text-muted">A cloud-ready, microservices-based platform built on Spring Boot that converts raw physical activity data into personalized coaching insights. Integrates Google's Gemini API for structured fitness recommendations and RabbitMQ for asynchronous non-blocking processing.</p>
+        </div>
+
+        <div class="synopsis-section">
+          <h4 class="synopsis-heading"><i data-lucide="users"></i> Project Team Members</h4>
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-name">Gagan Deep</div>
+              <div class="team-roll">Roll No: 20505</div>
+              <div class="team-branch">B.Tech AIML / CSE</div>
+            </div>
+            <div class="team-card highlight">
+              <div class="team-name">Krish Gupta</div>
+              <div class="team-roll">Roll No: 20510</div>
+              <div class="team-branch">B.Tech AIML / CSE</div>
+            </div>
+            <div class="team-card">
+              <div class="team-name">Himanshu Pandey</div>
+              <div class="team-roll">Roll No: 20506</div>
+              <div class="team-branch">B.Tech AIML / CSE</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="synopsis-section">
+          <h4 class="synopsis-heading"><i data-lucide="target"></i> Project Objectives & Features</h4>
+          <ul class="synopsis-bullet-list">
+            <li><strong>Microservices Backend:</strong> Separates user management, activity logging, and AI recommendation microservices.</li>
+            <li><strong>Asynchronous RabbitMQ Queue:</strong> Prevents heavy AI LLM processing from blocking user UI response times.</li>
+            <li><strong>Google Gemini API:</strong> Automatically generates personalized fitness insights, safety warnings, and recovery recommendations.</li>
+            <li><strong>Keycloak Security:</strong> Implements standard OAuth 2.0 PKCE authentication flow.</li>
+          </ul>
+        </div>
+
+        <div class="synopsis-section">
+          <h4 class="synopsis-heading"><i data-lucide="calendar"></i> Gantt Chart / Work Plan (5-Week Milestones)</h4>
+          <div class="table-responsive">
+            <table class="data-table text-center">
+              <thead>
+                <tr>
+                  <th class="text-left">Activity / Module</th>
+                  <th>Week 1</th>
+                  <th>Week 2</th>
+                  <th>Week 3</th>
+                  <th>Week 4</th>
+                  <th>Week 5</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-left">Core Infrastructure Setup</td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td class="text-left">Security & User Management (Keycloak)</td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td class="text-left">Activity Tracking & RabbitMQ Module</td>
+                  <td></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td class="text-left">AI Recommendation Engine (Gemini)</td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td class="text-left">API Gateway & React Frontend Dashboard</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="check-mark">✓</span></td>
+                  <td><span class="check-mark">✓</span></td>
+                </tr>
+                <tr>
+                  <td class="text-left">End-to-End System Validation</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="check-mark">✓</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="text-muted text-sm">Affiliated to Dr. A.P.J. Abdul Kalam Technical University (AKTU), Lucknow</span>
+        <button class="btn btn-primary" id="btn-close-synopsis-footer">Close Synopsis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: GEMINI API KEY CONFIGURATION -->
+  <div id="modal-apikey" class="modal-backdrop">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i data-lucide="key" class="text-ai"></i> Google Gemini API Settings</h3>
+        <button class="modal-close" id="close-apikey-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted">By default, FitTrack AI provides a high-fidelity local AI inference simulator based on Gemini prompt templates. If you wish to connect a live Google Gemini API key, enter it below:</p>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="gemini-api-key-input">Gemini API Key (Optional)</label>
+          <input type="password" id="gemini-api-key-input" class="form-control" placeholder="AIzaSy..." />
+        </div>
+        <p class="text-xs text-info"><i data-lucide="shield"></i> Your key is saved locally in your browser memory and never transmitted outside your session.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-sm" id="btn-clear-key">Clear Key</button>
+        <button class="btn btn-primary" id="btn-save-key">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
